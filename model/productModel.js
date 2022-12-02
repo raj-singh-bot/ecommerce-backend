@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     category: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'Category'
+        type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true
     },
     quantity: {type: Number, required: true},
     reviews: [
@@ -28,6 +28,8 @@ const productSchema = new mongoose.Schema({
         review: String
         }
     ],
+    size: [{type: String}],
+    color: [{type: String}],
     productImages: [
         { img: {type: String} }
     ],

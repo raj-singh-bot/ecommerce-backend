@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const shortid = require('shortid')
 const { addProduct, getProduct, getProductByslug, getProductDetailsById } = require('../controllers/productController');
-const { requireSignin } = require('../middleware/middleware');
+const { requireSignin, adminMiddleware } = require('../middleware/middleware');
 const productRoute = express.Router();
 
 const storage = multer.diskStorage({

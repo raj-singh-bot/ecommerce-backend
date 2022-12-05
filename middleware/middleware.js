@@ -12,4 +12,11 @@ const requireSignin = (req, res, next) => {
     //jwt.decode()
 };
 
-module.exports = { requireSignin}
+const adminMiddleware = (req, res, next) => {
+  if(req.user.role !== "admin"){
+    return res.status(400).json({ message: "Admin access denied" });
+  }
+  next()
+}
+
+module.exports = { requireSignin, adminMiddleware}

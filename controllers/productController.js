@@ -54,6 +54,20 @@ const getProductByslug = async(req,res) => {
     })
 }
 
+const getProductDetailsById = (req, res) => {
+    const {productId} = req.params;
+    if(productId){
+        Product.findOne({_id: productId}).exec((error, product) => {
+            if(error) return res.status(400).json({error});
+            if(product){
+                res.status(200).json({product})
+            }
+        })
+    }else{
+        return res.status(400).json({error: 'params required'})
+    }
+}
+
 const getProduct = async(req, res) => {
     const data = await Product.find({})
     if(data){
@@ -61,4 +75,4 @@ const getProduct = async(req, res) => {
     }
 }
 
-module.exports= {addProduct, getProduct, getProductByslug}
+module.exports= {addProduct, getProduct, getProductByslug, getProductDetailsById}

@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const shortid = require('shortid')
-const { addProduct, getProduct, getProductByslug, getProductDetailsById } = require('../controllers/productController');
+const { addProduct, getProduct, getProductByslug, getProductDetailsById, updateProduct, deleteProduct } = require('../controllers/productController');
 const { requireSignin, adminMiddleware } = require('../middleware/middleware');
 const productRoute = express.Router();
 
@@ -24,5 +24,9 @@ productRoute.route('/getProducts').get(requireSignin, getProduct)
 productRoute.route('/products/:slug').get(getProductByslug)
 
 productRoute.route('/product/:productId').get(getProductDetailsById)
+
+productRoute.put('/product/:productId',requireSignin, adminMiddleware,upload.array('productImages'), updateProduct)
+
+productRoute.delete('/product/:productId', requireSignin, adminMiddleware, deleteProduct)
 
 module.exports = productRoute

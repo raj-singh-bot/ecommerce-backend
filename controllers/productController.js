@@ -5,7 +5,6 @@ const Category = require('../model/categoryModel');
 
 const addProduct = async(req, res) => {
     const {name, price, description,quantity, category, size, color} = req.body;
-
     let productImages= []
 
     if(req.files.length > 0){
@@ -75,4 +74,47 @@ const getProduct = async(req, res) => {
     }
 }
 
-module.exports= {addProduct, getProduct, getProductByslug, getProductDetailsById}
+const updateProduct = async(req, res) => {
+    // console.log(req.body)
+    // console.log('id', req.params.productId)
+
+    const {name, price, description,quantity, category, size, color} = req.body;
+    let productImages= []
+
+    if(req.files.length > 0){
+        productImages = req.files.map((file) => {
+            return {img: file.filename}
+        })
+    }
+    Product.findByIdAndUpdate( req.params.productId, {
+        name,
+        slug: slugify(name),
+        description,
+        color,
+        size,
+        quantity,
+        // productImages ,
+        price,
+        category,
+        createdBy: req.user.id
+    }, {
+        // upsert: true,
+        new: true
+    })
+    .then( (data) => res.status(200).json({ status : true, message : "Product Created" , data: data}))
+    .catch( (err) => {
+        console.log(`Error while updating product ${err}`)
+        res.status(500).send({status : false, message:'Error while updating the data'})
+    })
+}
+
+const deleteProduct = async(req, res) => {
+    Product.findByIdAndDelete(req.params.productId, (error, product) => {
+        if(error) return res.status(400).json({error: error.message})
+        if(product){
+            return res.status(200).json({message: "Product Deleted", product})
+        }
+    })
+}
+
+module.exports= {addProduct, getProduct, getProductByslug, getProductDetailsById, updateProduct, deleteProduct}

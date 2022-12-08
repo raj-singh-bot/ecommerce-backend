@@ -25,7 +25,10 @@ const productSchema = new mongoose.Schema({
     reviews: [
         {
         userId: {type: mongoose.Schema.Types.ObjectId , ref: 'User' },
-        review: String
+        review: {
+            reviewImages: [ { img: {type: String} } ],
+            description: {type: String}
+        }
         }
     ],
     size: [{type: String}],

@@ -23,7 +23,7 @@ const addProduct = async(req, res) => {
         color,
         size,
         category,
-        createdBy: req.user._id
+        createdBy: req.user.id
     })
     
     product.save((error, product) => {
@@ -68,10 +68,27 @@ const getProductDetailsById = (req, res) => {
 }
 
 const getProduct = async(req, res) => {
-    const data = await Product.find({})
-    if(data){
-        res.status(200).json({data})
+    try {
+        const data = await Product.find({})
+        .select("_id name price quantity slug description productImages category")
+        .populate({ path: "category", select: "_id name" })
+
+
+    // .exec((error, data) => {
+    //     if(error) res.status(400).json({message:'no data found'})
+    //     if(data){
+    //         return res.status(200).json({data})
+    //     }
+    // });
+    if(!data){
+        return res.status(400).json({message:'no data found'})
     }
+    res.status(200).json({data})
+    } catch (error) {
+        console.log(error,'product')
+        res.status(400).json({msg: error.message})
+    }
+    
 }
 
 const updateProduct = async(req, res) => {

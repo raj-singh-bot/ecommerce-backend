@@ -12,7 +12,7 @@ const app = express();
 connectDB();
 app.use(cors())
 app.use(express.json())
-
+app.use(express.static("uploads"));
 app.use('/auth', authRoute)
 app.use('/auth', adminRoute)
 app.use('/category', categoryRoute)

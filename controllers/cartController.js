@@ -52,4 +52,26 @@ const addItemToCart = async(req, res) => {
     })
 }
 
-module.exports = {addItemToCart}
+const removeCartItems = (req, res) => {
+    const {productId} = req.body.payload;
+    console.log(req.body.payload)
+    if(productId){
+        Cart.updateOne(
+            {user: req.user.id},
+            {
+                $pull: {
+                    cartItems: {
+                        product: productId
+                    }
+                }    
+            }
+        ).exec((error, result) => {
+            if(error) return res.status(400).json({error: error.message});
+            if(result){
+                return res.status(202).json({result})
+            }
+        })
+    }
+}
+
+module.exports = {addItemToCart, removeCartItems}

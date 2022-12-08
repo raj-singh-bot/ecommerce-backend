@@ -36,11 +36,14 @@ const adminRegister = (req, res) => {
 const adminLogin = async(req, res) => {
     const { email, password } = req.body;
     if(!email || !password){
-        return res.status(400).json({msg: 'Please fill all the fields'})
+        return res.status(400).json({error: 'Please fill all the fields'})
     }
+    // try{
 
-    const admin = await User.findOne({email})
-    try{
+        const admin = await User.findOne({email})
+        if(!admin){
+            return res.status(400).json({error: 'invalid username'})
+        }
         if(admin && (await admin.matchPassword(password)) && admin.role == 'admin'){
             const token = jwt.sign(
                 { _id: admin._id, role: admin.role },
@@ -50,14 +53,16 @@ const adminLogin = async(req, res) => {
               const { _id, email, role,  } = admin;
             res.status(200).json({
                 _id: _id,
-                email: email,
+                email: email,   
                 role: role,
                 token
             })
+        }else{
+            res.status(404).json({error: 'invalid password'})
         }
-    }catch(error){
-        console.log(error)
-        res.status(404).json({error: error.message})
-    }
+    // }catch(error){
+    //     console.log(error,'idhars')
+    //     res.status(404).json({error: error.message})
+    // }
 }
 module.exports = {adminRegister, adminLogin}

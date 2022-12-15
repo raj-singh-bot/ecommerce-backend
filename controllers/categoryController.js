@@ -26,11 +26,13 @@ function createCategories(categories, parentId = null) {
   }
 
 const addCategory = async(req, res) => {
+  console.log(req.user)
     const {name, slug, type, parentId, categoryImage, createdBy} = req.body;
+    console.log(name, parentId)
     const categoryObj = {
         name: name,
         slug: slugify(name),
-        createdBy: createdBy
+        createdBy: req.user._id
     }
 
     if(parentId){
@@ -54,4 +56,31 @@ const getCategory = async(req, res) => {
     }
 }
 
-module.exports = {addCategory,getCategory}
+const deleteCategory = async(req, res) => {
+  const {payload} = req.body
+  console.log(payload, 'ids')
+  try {
+      const deletedCategories =[]
+    for (let i = 0; i < payload.length; i++) {
+      const deleteCategory = await Category.findOneAndDelete({
+        _id: payload[i]._id,
+        createdBy: req.user._id,
+      });
+      deletedCategories.push(deleteCategory);
+    }
+    if (deletedCategories.length == payload.length) {
+      const categories =await Category.find({});
+      if(categories){
+        const categoryList = createCategories(categories);
+      res.status(201).json({ message: "Categories removed" ,data: categoryList});
+      }
+    } 
+  } catch (error) {
+    
+    res.status(400).json({ message: error.message });
+  }
+  // else {
+  // }
+}
+
+module.exports = {addCategory,getCategory,deleteCategory}

@@ -9,7 +9,7 @@ const addProduct = async(req, res) => {
 
     if(req.files.length > 0){
         productImages = req.files.map((file) => {
-            return {img: file.filename}
+            return {img: process.env.API + /public/ + file.filename}
         })
     }
 

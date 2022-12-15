@@ -11,7 +11,8 @@ const catchError = (err, res) => {
 
 
 const requireSignin = (req, res, next) => {
-    // try{
+    try{
+      if(!req.headers.authorization) return res.status(400).json({msg: 'Enter token'})
       if (req.headers.authorization) {
       const token = req.headers.authorization.split(" ")[1];
       if(!token) return res.status(400).json({msg: 'token not provided'})
@@ -27,10 +28,10 @@ const requireSignin = (req, res, next) => {
     //   return res.status(400).json({ message: "Authorization required" });
     // }
     // next();
-  // }catch(error){
-  //   console.log(error)
-  //   res.status(500).json({error:error.messages})
-  // }
+  }catch(error){
+    console.log(error)
+    res.status(500).json({error:error.messages})
+  }
     //jwt.decode()
 };
 

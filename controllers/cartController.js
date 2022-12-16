@@ -7,7 +7,7 @@ const addItemToCart = async(req, res) => {
         if(error) return res.status(400).json({error})
         if(cart){
             const item = cart.cartItems.find(c => c.product == req.body.cartItems.product)
-            console.log(item.quantity, 'item')
+            console.log(item, 'item')
             console.log(req.body.cartItems.quantity, 'newitem')
             if(item){
                 Cart.findOneAndUpdate({ "user": req.user.id , "cartItems.product": req.body.cartItems.product}, {

@@ -2,17 +2,18 @@ const UserAddress = require('../model/addressModel')
 
 const addAddress = async(req, res) => {
     console.log(req.user)
-    console.log(req.body.payload)
-    const {payload} = req.body
-    if(payload.address){
-        if(payload.address._id){
+    console.log(req.body)
+    const {address} = req.body
+    if(address){
+        if(address._id){
             UserAddress.findOneAndUpdate(
-                { user: req.user.id, "address._id": payload.address._id },
+                { user: req.user.id, "address._id": address._id },
                 {
                   $set: {
-                    "address.$": payload.address,
+                    "address.$": address,
                   },
-                }
+                },
+                {new: true}
               ).exec((error, address) => {
                 if (error) return res.status(400).json({ error });
                 if (address) {
@@ -24,7 +25,7 @@ const addAddress = async(req, res) => {
                 { user: req.user.id },
                 {
                   $push: {
-                    address: payload.address,
+                    address: address,
                   },
                 },
                 { new: true, upsert: true }

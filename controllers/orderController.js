@@ -1,6 +1,7 @@
 const Order = require('../model/orderModel')
 const Cart = require('../model/cartModel')
-const Address = require('../model/addressModel')
+const UserAddress = require('../model/addressModel')
+const Product = require('../model/productModel')
 
 const addOrder = async(req, res) => {
     Cart.deleteOne({user: req.user.id}).exec((error, result) => {
@@ -28,9 +29,21 @@ const addOrder = async(req, res) => {
             ];
             const order = new Order(req.body);
             order.save((error, order) => {
-                if(error) return res.status(400).json({error})
+                if(error) return res.status(400).json({error});
                 if(order){
-                    res.status(201).json({ order });
+                    req.body.items.forEach((item) => {
+                        Product.updateOne(
+                            {_id: item.productId},
+                            { $inc: {"quantity": -item.purchasedQty},}
+                        )
+                        .exec((error, qty) => {
+                            if(error) return res.status(400).json({error})
+                            if(qty){
+                                console.log(qty)
+                                res.status(201).json({ order });
+                            }
+                        })
+                    })
                 }
             })
         }
@@ -50,6 +63,7 @@ const getAllOrders = async(req, res) => {
 }
 
 const getOrder = async(req, res) => {
+    console.log(req.body)
     try {
         if(!req.body.orderId){
             return res.status(400).json({msg: 'please provide orderId'})
@@ -60,12 +74,12 @@ const getOrder = async(req, res) => {
         .exec((error, order) => {
             if(error) return res.status(400).json({error})
             if(order){
-                Address.findOne({user: req.user.id})
+                UserAddress.findOne({user: req.user.id})
                 .exec((error, address) => {
                     if(error) return res.status(400).json({error})
                     order.address = address.address.find((adr) => adr._id.toString() == order.addressId.toString())
+                    res.status(200).json({order})
                 })
-                res.status(200).json({order})
             }
         })
     } catch (error) {

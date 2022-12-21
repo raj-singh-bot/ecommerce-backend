@@ -87,7 +87,7 @@ const getCartItems = (req,res) => {
     .exec((error, cart) => {
         if(error) return res.status(400).json({error});
         // console.log(cart,'cart')
-        if(!cart) return res.status(400).json({msg: 'Your Cart is Empty'})
+        if(!cart) return res.status(404).json({msg: 'Your Cart is Empty'})
         if(cart){
             let cartItems = {}
             cart.cartItems.forEach((item, index) => {

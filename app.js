@@ -10,6 +10,7 @@ const adminRoute = require('./routes/admin/auth');
 const path = require('path');
 const addressRoute = require('./routes/addressRoute');
 const orderRouter = require('./routes/orderRoute');
+const adminOrder = require('./routes/admin/orderRoute.admin');
 const app = express();
 
 connectDB();
@@ -23,6 +24,7 @@ app.use('/product', productRoute)
 app.use('/cart', cartRoute)
 app.use('/api', addressRoute)
 app.use('/order', orderRouter)
+app.use('/admin', adminOrder)
 
 const times = new Array()
 app.post('/count', (req, res) => {
